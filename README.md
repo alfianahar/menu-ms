@@ -1,112 +1,85 @@
-# Turborepo Next.js and NestJS Boilerplate with Vercel
-
-This is a comprehensive monorepo starter using modern web technologies.
+# 🍽️ Menu Management System - Technical Assignment
 
 ## Tech Stack
 
-- **Frontend**:
+### Frontend
 
-  - [Next.js](https://nextjs.org/) (Static Site Generation)
-  - React
-  - TypeScript
+- Next.js 14
+- React
+- TypeScript
+- Tailwind CSS
+- Shadcn UI
+- Redux
 
-- **Backend**:
+### Backend
 
-  - [NestJS](https://nestjs.com/)
-  - TypeScript
+- NestJS
+- Prisma ORM
+- PostgreSQL
 
-- **Development Tools**:
-  - Turbo Monorepo
-  - ESLint
-  - Prettier
-  - Yarn Workspaces
+## Project Overview
 
-## Static Site Generation
+A comprehensive menu management system demonstrating full-stack development skills with modern web technologies.
 
-This project leverages Next.js's Static Site Generation (SSG) capabilities. By using `getStaticProps` and static generation, the web application can be pre-rendered at build time, resulting in:
+## Key Features
 
-- Improved performance
-- Better SEO
-- Reduced server load
-- Enhanced security
+- 📋 CRUD operations for menu items
+- 🔒 Authentication and authorization
+- 📊 Responsive and intuitive UI
+- 🚀 Efficient state management
+- 💾 Robust database interactions
 
-## Using this example
+## Getting Started
 
-Run the following command:
+### Prerequisites
 
-```sh
-npx create-turbo@latest
-```
+- Node.js (v18+)
+- Yarn or PNPM
+- PostgreSQL
 
-## What's inside?
+### Installation
 
-This Turborepo includes the following packages/apps:
+```bash
+# Clone the repository
+git clone https://github.com/yourusername/menu-management-system.git
 
-### Apps and Packages
+# Install dependencies
+pnpm install
 
-- `web`: a [Next.js](https://nextjs.org/) app with static generation
-- `api`: a [NestJS](https://nestjs.com/) backend service
-- `@repo/ui`: a stub React component library shared by both `web` and `docs` applications
-- `@repo/eslint-config`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
-- `@repo/typescript-config`: `tsconfig.json`s used throughout the monorepo
+# Set up environment variables
+cp .env.example .env
 
-Each package/app is 100% [TypeScript](https://www.typescriptlang.org/).
+# Run database migrations
+pnpm prisma migrate dev
 
-### Utilities
-
-This Turborepo has some additional tools already setup for you:
-
-- [TypeScript](https://www.typescriptlang.org/) for static type checking
-- [ESLint](https://eslint.org/) for code linting
-- [Prettier](https://prettier.io) for code formatting
-
-### Build
-
-To build all apps and packages, run the following command:
-
-```
-cd my-turborepo
-pnpm build
-```
-
-### Develop
-
-To develop all apps and packages, run the following command:
-
-```
-cd my-turborepo
+# Start development servers
 pnpm dev
 ```
 
-### Remote Caching
+## Project Structure
 
-> [!TIP]
-> Vercel Remote Cache is free for all plans. Get started today at [vercel.com](https://vercel.com/signup?/signup?utm_source=remote-cache-sdk&utm_campaign=free_remote_cache).
+- `apps/web`: Next.js frontend
+- `apps/api`: NestJS backend
+- `packages/ui`: Shared UI components
+- `packages/config`: Shared configurations
 
-Turborepo can use a technique known as [Remote Caching](https://turbo.build/repo/docs/core-concepts/remote-caching) to share cache artifacts across machines, enabling you to share build caches with your team and CI/CD pipelines.
+## Scripts
 
-By default, Turborepo will cache locally. To enable Remote Caching you will need an account with Vercel. If you don't have an account you can [create one](https://vercel.com/signup?utm_source=turborepo-examples), then enter the following commands:
+- `pnpm build`: Build all applications
+- `pnpm dev`: Start development servers
+- `pnpm test`: Run tests
+- `pnpm lint`: Run linters
 
-```
-cd my-turborepo
-npx turbo login
-```
+## Technologies Rationale
 
-This will authenticate the Turborepo CLI with your [Vercel account](https://vercel.com/docs/concepts/personal-accounts/overview).
+- **Next.js 14**: Modern React framework with enhanced performance
+- **Tailwind CSS**: Utility-first styling
+- **Shadcn UI**: Accessible, customizable component library
+- **Redux**: Predictable state management
+- **NestJS**: Scalable server-side framework
+- **Prisma**: Type-safe database ORM
+- **PostgreSQL**: Robust relational database
 
-Next, you can link your Turborepo to your Remote Cache by running the following command from the root of your Turborepo:
+## License
 
-```
-npx turbo link
-```
-
-## Useful Links
-
-Learn more about the power of Turborepo:
-
-- [Tasks](https://turbo.build/repo/docs/core-concepts/monorepos/running-tasks)
-- [Caching](https://turbo.build/repo/docs/core-concepts/caching)
-- [Remote Caching](https://turbo.build/repo/docs/core-concepts/remote-caching)
-- [Filtering](https://turbo.build/repo/docs/core-concepts/monorepos/filtering)
-- [Configuration Options](https://turbo.build/repo/docs/reference/configuration)
-- [CLI Usage](https://turbo.build/repo/docs/reference/command-line-reference)
+[Your License Here]

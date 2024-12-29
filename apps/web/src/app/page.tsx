@@ -2,14 +2,20 @@
 
 import { useState } from "react";
 import axios from "axios";
+import { Button } from "@/components/ui/button";
+import { useAppDispatch, useAppSelector } from "../../store/hooks";
+import { increment, decrement } from "../../store/features/exampleSlice";
 
 export default function Home() {
+  const count = useAppSelector((state) => state.example.value);
+  const dispatch = useAppDispatch();
+
   const [apiResponse, setApiResponse] = useState<string | null>(null);
 
-  const callNestApi = async () => {
+  const callHelloApi = async () => {
     try {
       const response = await axios.get(
-        `${process.env.NEXT_PUBLIC_API_URL ? process.env.NEXT_PUBLIC_API_URL + "/api" : "/api"}/`
+        `${process.env.NEXT_PUBLIC_API_URL ? process.env.NEXT_PUBLIC_API_URL + "/api" : "/api"}/hello`,
       );
       setApiResponse(response.data);
     } catch (error) {
@@ -28,19 +34,10 @@ export default function Home() {
         <h1 className="text-2xl font-bold mb-4">Nest.js API Interaction</h1>
 
         <div className="flex space-x-4">
-          <button
-            onClick={callNestApi}
-            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-          >
-            Call Nest API
-          </button>
+          <Button onClick={callHelloApi}>Call Hello API</Button>
+          {/* <Button onClick={callNestApi}>Call Nest API</Button> */}
 
-          <button
-            onClick={resetHandler}
-            className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
-          >
-            Reset
-          </button>
+          <Button onClick={resetHandler}>Reset</Button>
         </div>
 
         {apiResponse && (
@@ -50,6 +47,12 @@ export default function Home() {
             </p>
           </div>
         )}
+      </div>
+
+      <h1 className="text-2xl font-bold mt-4">Count Redux: {count}</h1>
+      <div className="flex space-x-4">
+        <Button onClick={() => dispatch(increment())}>Increment</Button>
+        <Button onClick={() => dispatch(decrement())}>Decrement</Button>
       </div>
     </main>
   );

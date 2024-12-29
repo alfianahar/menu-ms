@@ -6,7 +6,10 @@
     "start": "cd apps/api && node dist/main.js",
     "dev": "turbo dev",
     "lint": "turbo lint",
-    "format": "prettier --write \"**/*.{ts,tsx,md}\""
+    "format": "prettier --write \"**/*.{ts,tsx,md}\"",
+    "db:generate": "turbo generate",
+    "db:migrate:dev": "turbo migrate:dev",
+    "db:migrate:deploy": "turbo migrate:deploy"
   },
   "devDependencies": {
     "prettier": "^3.2.5",
