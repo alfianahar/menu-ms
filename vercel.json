@@ -3,11 +3,8 @@
   "buildCommand": "yarn build",
   "builds": [
     {
-      "src": "apps/web/next.config.js",
-      "use": "@vercel/next",
-      "config": {
-        "outputDirectory": "out"
-      }
+      "src": "apps/web/out/*",
+      "use": "@now/static"
     },
     {
       "src": "apps/api/src/main.ts",
@@ -16,12 +13,9 @@
   ],
   "routes": [
     {
-      "src": "/api/(.*)",
-      "dest": "apps/api/src/main.ts"
-    },
-    {
       "src": "/(.*)",
-      "dest": "apps/web/out/$1"
+      "dest": "apps/api/src/main.ts",
+      "methods": ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"]
     }
   ],
   "env": {
