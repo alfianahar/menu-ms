@@ -3,6 +3,7 @@ import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
 import { HelloModule } from './modules/hello/hello.module';
 import { PrismaModule } from './modules/prisma/prisma.module';
+import { MenuModule } from './modules/menu/menu.module';
 @Module({
   imports: [
     ServeStaticModule.forRoot({
@@ -10,6 +11,7 @@ import { PrismaModule } from './modules/prisma/prisma.module';
       exclude: ['/api*'],
     }),
     HelloModule,
+    MenuModule,
     PrismaModule,
   ],
   controllers: [],

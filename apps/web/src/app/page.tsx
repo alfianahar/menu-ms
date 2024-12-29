@@ -15,13 +15,20 @@ export default function Home() {
   const callHelloApi = async () => {
     try {
       const response = await axios.get(
-        `${process.env.NEXT_PUBLIC_API_URL ? process.env.NEXT_PUBLIC_API_URL + "/api" : "/api"}/hello`,
+        `${process.env.NEXT_PUBLIC_API_URL ? process.env.NEXT_PUBLIC_API_URL + "/api" : "/api"}/hello`
       );
       setApiResponse(response.data);
     } catch (error) {
       console.error("Error calling API:", error);
       setApiResponse("Error occurred while calling the API");
     }
+  };
+
+  const callGetAllMenus = async () => {
+    const response = await axios.get(
+      `${process.env.NEXT_PUBLIC_API_URL ? process.env.NEXT_PUBLIC_API_URL + "/api" : "/api"}/get-all-menus`
+    );
+    setApiResponse(response.data);
   };
 
   const resetHandler = () => {
@@ -35,7 +42,7 @@ export default function Home() {
 
         <div className="flex space-x-4">
           <Button onClick={callHelloApi}>Call Hello API</Button>
-          {/* <Button onClick={callNestApi}>Call Nest API</Button> */}
+          <Button onClick={callGetAllMenus}>Call Get All Menus API</Button>
 
           <Button onClick={resetHandler}>Reset</Button>
         </div>
@@ -43,7 +50,7 @@ export default function Home() {
         {apiResponse && (
           <div className="mt-4 p-4 bg-gray-100 rounded">
             <p className="text-lg font-semibold text-black">
-              API Response: {apiResponse}
+              API Response: {JSON.stringify(apiResponse)}
             </p>
           </div>
         )}
