@@ -1,7 +1,7 @@
 {
   "version": 2,
   "buildCommand": "yarn build",
-
+  "startCommand": "yarn workspace api start:prod",
   "routes": [
     {
       "src": "/(.*)",
