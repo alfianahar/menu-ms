@@ -2,8 +2,12 @@
   "version": 2,
   "builds": [
     {
-      "src": "apps/web/next.config.mjs",
-      "use": "@vercel/next"
+      "src": "apps/web/package.json",
+      "use": "@vercel/next",
+      "config": {
+        "outputDirectory": "out",
+        "buildCommand": "next build"
+      }
     },
     {
       "src": "apps/api/src/main.ts",
