@@ -5,7 +5,6 @@
       "src": "apps/web/package.json",
       "use": "@vercel/next",
       "config": {
-        "outputDirectory": "out",
         "buildCommand": "next build"
       }
     },
