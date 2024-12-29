@@ -1,5 +1,5 @@
 {
-  "name": "test-again",
+  "name": "monorepo-nextjs-nestjs-vercel-boilerplate",
   "private": true,
   "scripts": {
     "build": "turbo build",
@@ -19,5 +19,8 @@
   "workspaces": [
     "apps/*",
     "packages/*"
-  ]
+  ],
+  "dependencies": {
+    "@nestjs/serve-static": "^4.0.2"
+  }
 }
