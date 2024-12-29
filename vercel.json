@@ -1,7 +1,12 @@
 {
   "version": 2,
   "buildCommand": "yarn build",
-  "startCommand": "yarn workspace api start:prod",
+  "builds": [
+    {
+      "src": "apps/api/dist/main.js",
+      "use": "@vercel/node"
+    }
+  ],
   "routes": [
     {
       "src": "/(.*)",
