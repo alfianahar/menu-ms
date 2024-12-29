@@ -2,7 +2,9 @@
   "name": "monorepo-nextjs-nestjs-vercel-boilerplate",
   "private": true,
   "scripts": {
-    "build": "turbo build",
+    "build:web": "cd apps/web && next build",
+    "build:api": "cd apps/api && nest build",
+    "build": "yarn build:web && yarn build:api",
     "dev": "turbo dev",
     "lint": "turbo lint",
     "format": "prettier --write \"**/*.{ts,tsx,md}\""
