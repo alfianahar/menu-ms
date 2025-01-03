@@ -13,6 +13,13 @@
       "use": "@vercel/node"
     },
     {
+      "src": "packages/db/prisma/schema.prisma",
+      "use": "@vercel/node",
+      "config": {
+        "buildCommand": "npx prisma generate"
+      }
+    },
+    {
       "src": "apps/web/out/*",
       "use": "@vercel/static"
     }
