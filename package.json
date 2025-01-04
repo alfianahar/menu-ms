@@ -1,5 +1,5 @@
 {
-  "name": "monorepo-nextjs-nestjs-vercel-boilerplate",
+  "name": "menu-ms",
   "private": true,
   "scripts": {
     "build": "turbo build",
@@ -7,9 +7,9 @@
     "dev": "turbo dev",
     "lint": "turbo lint",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
-    "db:generate": "turbo generate",
-    "db:migrate:dev": "turbo migrate:dev",
-    "db:migrate:deploy": "turbo migrate:deploy"
+    "generate": "cd apps/api && npx prisma generate",
+    "migrate:dev": "cd apps/api && npx prisma migrate dev --name init",
+    "migrate:deploy": "cd apps/api && npx prisma migrate deploy"
   },
   "devDependencies": {
     "prettier": "^3.2.5",

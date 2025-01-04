@@ -2,13 +2,6 @@
   "version": 2,
   "builds": [
     {
-      "src": "packages/db/prisma/schema.prisma",
-      "use": "@vercel/node",
-      "config": {
-        "buildCommand": "npx prisma generate"
-      }
-    },
-    {
       "src": "apps/web/package.json",
       "use": "@vercel/next",
       "config": {
