@@ -74,7 +74,7 @@ export function MenuTree() {
     return (
       <div key={item.id} className="flex flex-col relative">
         {/* Vertical line for parent hierarchy */}
-        {item.depth > 0 && isFirstAtDepth && (
+        {item.depth > 0 && isFirstAtDepth && !isLastAtDepth && (
           <div
             className="absolute border-l-2 border-[#E5E7EB]"
             style={{
