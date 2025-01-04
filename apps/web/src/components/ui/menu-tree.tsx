@@ -6,19 +6,31 @@ import { ChevronDown, ChevronRight } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { MenuItem, setSelectedMenu } from "@/lib/store/slices/menuSlice";
+import {
+  MenuItem,
+  setSelectedMenu,
+  fetchMenus,
+} from "@/lib/store/slices/menuSlice";
 import { AddMenuButton } from "./add-menu-button";
 import { RootState } from "@/lib/store";
+import { AppDispatch } from "@/lib/store";
 
 export function MenuTree() {
   const [expanded, setExpanded] = React.useState<Record<string, boolean>>({});
-  const items = useSelector((state: RootState) => state.menu.items);
-  const dispatch = useDispatch();
+  const { items, loading, error } = useSelector(
+    (state: RootState) => state.menu
+  );
+  const dispatch = useDispatch<AppDispatch>();
+
+  // Fetch menus on component mount
+  React.useEffect(() => {
+    dispatch(fetchMenus());
+  }, [dispatch]);
 
   // Group items by their parent
   const groupedItems = React.useMemo(() => {
     return items.reduce(
-      (acc, item) => {
+      (acc: { [x: string]: any[] }, item: { parentData: any }) => {
         const parent = item.parentData;
         if (!acc[parent]) {
           acc[parent] = [];
@@ -39,7 +51,7 @@ export function MenuTree() {
 
   const expandAll = () => {
     const allExpanded: Record<string, boolean> = {};
-    items.forEach((item) => {
+    items.forEach((item: { name: string | number }) => {
       allExpanded[item.name] = true;
     });
     setExpanded(allExpanded);
@@ -59,8 +71,6 @@ export function MenuTree() {
     const isExpanded = expanded[item.name];
     const children = groupedItems[item.name] || [];
 
-    console.log(item.name, item.depth, isFirstAtDepth, isLastAtDepth);
-
     return (
       <div key={item.id} className="flex flex-col relative">
         {/* Vertical line for parent hierarchy */}
@@ -74,19 +84,6 @@ export function MenuTree() {
             }}
           />
         )}
-
-        {/* Horizontal line connecting siblings at same depth */}
-        {/* {item.depth > 0 && (
-          <div
-            className="absolute border-t-2 border-[#E5E7EB]"
-            style={{
-              left: `${item.depth * 12}px`,
-              top: "50%",
-              width: "12px",
-              zIndex: 1,
-            }}
-          />
-        )} */}
 
         <div
           className={cn(
@@ -143,13 +140,22 @@ export function MenuTree() {
             {item.name}
           </button>
           <AddMenuButton
-            onClick={() => dispatch(setSelectedMenu({ ...item, id: "" }))}
+            onClick={() =>
+              dispatch(
+                setSelectedMenu({
+                  ...item,
+                  id: "",
+                  parentData: item.name,
+                  depth: item.depth + 1,
+                })
+              )
+            }
           />
         </div>
 
         {hasChildren && isExpanded && (
           <div className="relative flex flex-col">
-            {children.map((child, index) => {
+            {children.map((child: MenuItem, index: number) => {
               const isFirstChild = index === 0;
               const isLastChild = index === children.length - 1;
               return renderMenuItem(
@@ -186,12 +192,24 @@ export function MenuTree() {
         </Button>
       </div>
       <div className="rounded-lg border bg-background p-2">
-        {groupedItems["Root"].map((item, index) =>
-          renderMenuItem(
-            item,
-            index === groupedItems["Root"].length - 1,
-            index === 1,
-            index === groupedItems["Root"].length - 1
+        {loading ? (
+          <div className="p-4 text-center text-muted-foreground">
+            Loading...
+          </div>
+        ) : error ? (
+          <div className="p-4 text-center text-red-500">{error}</div>
+        ) : !groupedItems["Root"] || groupedItems["Root"].length === 0 ? (
+          <div className="p-4 text-center text-muted-foreground">
+            No menus found. Create your first menu to get started.
+          </div>
+        ) : (
+          groupedItems["Root"].map((item: MenuItem, index: number) =>
+            renderMenuItem(
+              item,
+              index === groupedItems["Root"].length - 1,
+              index === 1,
+              index === groupedItems["Root"].length - 1
+            )
           )
         )}
       </div>
