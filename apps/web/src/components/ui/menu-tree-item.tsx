@@ -42,8 +42,6 @@ export function MenuTreeItem({
     .flat()
     .find((parentCandidate) => parentCandidate.id === item.parent_id);
 
-  console.log(parentItem);
-
   const hasChildren = groupedItems[item.name]?.length > 0;
   const isExpanded = expanded[item.name];
   const children = groupedItems[item.name] || [];
