@@ -16,6 +16,9 @@ datasource db {
 model menu {
   id         String  @id @default(uuid())
   depth      Int
-  parentData String?
   name       String
+  parent_id  String?
+  parent_name String?
+  root_id    String?
+  root_name   String?
 }
