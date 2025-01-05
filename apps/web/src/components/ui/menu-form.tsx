@@ -1,38 +1,81 @@
 "use client";
 
-import * as React from "react";
+import { FormEvent, useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { v4 as uuidv4 } from "uuid";
+import { Trash2 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { RootState } from "@/lib/store";
-import { addMenuItem, updateMenuItem } from "@/lib/store/slices/menuSlice";
+import {
+  saveMenu,
+  deleteMenu as deleteMenuAction,
+} from "@/lib/store/slices/menuSlice";
+import { AppDispatch } from "@/lib/store";
+import { API_URL } from "@/lib/constants";
 
 export function MenuForm() {
-  const selectedMenu = useSelector(
-    (state: RootState) => state.menu.selectedMenu
+  const { selectedMenu, selectedRootMenu, formLoading } = useSelector(
+    (state: RootState) => state.menu
   );
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
+  const [menuName, setMenuName] = useState("");
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!selectedMenu) return;
-
-    if (selectedMenu.id) {
-      dispatch(updateMenuItem(selectedMenu));
-    } else {
-      dispatch(
-        addMenuItem({
-          ...selectedMenu,
-          id: uuidv4(),
-        })
-      );
+  // Update menuName when selectedMenu changes
+  useEffect(() => {
+    if (selectedMenu) {
+      setMenuName(selectedMenu.name || "");
     }
+  }, [selectedMenu]);
+
+  // If no selected menu, return null
+  if (!selectedMenu) return null;
+
+  const handleSubmit = (e: FormEvent) => {
+    e.preventDefault();
+
+    const generatedUUID = uuidv4();
+    const menuToSave =
+      selectedMenu.depth === 0 && !selectedMenu.id
+        ? {
+            id: generatedUUID,
+            name: menuName,
+            depth: 0,
+            parent_id: generatedUUID,
+            parent_name: "Root",
+            root_id: generatedUUID,
+            root_name: "Root",
+          }
+        : !selectedMenu.id
+          ? {
+              ...selectedMenu,
+              id: generatedUUID,
+              name: menuName,
+            }
+          : {
+              ...selectedMenu,
+              name: menuName,
+              root_id: selectedMenu.root_id || selectedRootMenu?.id || "",
+              root_name: selectedMenu.root_name || selectedRootMenu?.name || "",
+            };
+
+    dispatch(saveMenu(menuToSave));
   };
 
-  // if (!selectedMenu) return null;
+  const handleDelete = () => {
+    if (selectedMenu.id) {
+      // Show confirmation before deleting
+      const confirmDelete = window.confirm(
+        `Are you sure you want to delete the menu "${selectedMenu.name}"?`
+      );
+
+      if (confirmDelete) {
+        dispatch(deleteMenuAction(selectedMenu.id));
+      }
+    }
+  };
 
   return (
     <div className="w-96 rounded-lg border bg-white p-6">
@@ -41,7 +84,7 @@ export function MenuForm() {
           <Label htmlFor="menuId">Menu ID</Label>
           <Input
             id="menuId"
-            value={selectedMenu?.id || uuidv4()}
+            value={selectedMenu.id || "new menu items"}
             disabled
             className="bg-gray-50"
           />
@@ -51,17 +94,17 @@ export function MenuForm() {
           <Input
             id="depth"
             type="number"
-            value={selectedMenu?.depth || 0}
+            value={selectedMenu.depth}
             disabled
             className="bg-gray-50"
           />
         </div>
         <div className="space-y-2">
-          <Label htmlFor="parentId">Parent Data</Label>
+          <Label htmlFor="parentName">Parent Name</Label>
           <Input
-            id="parentId"
+            id="parentName"
             type="text"
-            value={selectedMenu?.parentData || ""}
+            value={selectedMenu.parent_name || ""}
             disabled
             className="bg-gray-50"
           />
@@ -70,19 +113,30 @@ export function MenuForm() {
           <Label htmlFor="name">Name</Label>
           <Input
             id="name"
-            value={selectedMenu?.name || ""}
-            onChange={(e) => {
-              if (selectedMenu) {
-                dispatch(
-                  updateMenuItem({ ...selectedMenu, name: e.target.value })
-                );
-              }
-            }}
+            value={menuName ?? selectedMenu.name}
+            onChange={(e) => setMenuName(e.target.value)}
+            required
           />
         </div>
-        <Button type="submit" className="w-full">
-          Save
-        </Button>
+        <div className="flex gap-2">
+          {/* Delete Button - only show if menu has an ID */}
+          {selectedMenu.id && (
+            <Button
+              type="button"
+              variant="destructive"
+              className="flex-grow-0 w-12"
+              onClick={handleDelete}
+              disabled={formLoading}
+            >
+              <Trash2 className="h-4 w-4" />
+            </Button>
+          )}
+
+          {/* Save Button */}
+          <Button type="submit" className="flex-grow" disabled={formLoading}>
+            {formLoading ? "Saving..." : "Save"}
+          </Button>
+        </div>
       </form>
     </div>
   );

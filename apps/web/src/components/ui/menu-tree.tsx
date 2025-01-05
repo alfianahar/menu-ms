@@ -2,14 +2,23 @@
 
 import * as React from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { ChevronDown, ChevronRight } from "lucide-react";
+import { ChevronDown, ChevronRight, Plus } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { cn } from "@/lib/utils";
 import {
   MenuItem,
   setSelectedMenu,
   fetchMenus,
+  fetchRootMenus,
+  setSelectedRootMenu,
 } from "@/lib/store/slices/menuSlice";
 import { AddMenuButton } from "./add-menu-button";
 import { RootState } from "@/lib/store";
@@ -17,21 +26,31 @@ import { AppDispatch } from "@/lib/store";
 
 export function MenuTree() {
   const [expanded, setExpanded] = React.useState<Record<string, boolean>>({});
-  const { items, loading, error } = useSelector(
-    (state: RootState) => state.menu
-  );
+  const {
+    items,
+    loading,
+    error,
+    rootMenus,
+    rootMenusLoading,
+    selectedRootMenu,
+  } = useSelector((state: RootState) => state.menu);
   const dispatch = useDispatch<AppDispatch>();
 
-  // Fetch menus on component mount
+  // Fetch root menus and all menus on component mount and when items change
   React.useEffect(() => {
+    dispatch(fetchRootMenus());
     dispatch(fetchMenus());
-  }, [dispatch]);
+  }, [dispatch, items.length]); // Add items.length to trigger refetch when items change
 
-  // Group items by their parent
+  // Group items by their parent, filtered by selected root menu
   const groupedItems = React.useMemo(() => {
-    return items.reduce(
-      (acc: { [x: string]: any[] }, item: { parentData: any }) => {
-        const parent = item.parentData;
+    const filteredItems = selectedRootMenu
+      ? items.filter((item) => item.root_id === selectedRootMenu.id)
+      : items;
+
+    return filteredItems.reduce(
+      (acc: { [x: string]: any[] }, item: { parent_name: any }) => {
+        const parent = item.parent_name || "Root";
         if (!acc[parent]) {
           acc[parent] = [];
         }
@@ -40,7 +59,28 @@ export function MenuTree() {
       },
       {} as Record<string, MenuItem[]>
     );
-  }, [items]);
+  }, [items, selectedRootMenu]);
+
+  // Handle root menu selection
+  const handleRootMenuChange = (rootId: string) => {
+    const selectedRoot = rootMenus.find((menu) => menu.id === rootId);
+    dispatch(setSelectedRootMenu(selectedRoot || null));
+  };
+
+  // Handle creating a new root menu
+  const handleAddRootMenu = () => {
+    dispatch(
+      setSelectedMenu({
+        id: "", // New item will have empty id
+        name: "", // Empty name to be filled in form
+        depth: 0, // Root menu has depth 0
+        parent_name: "Root", // Explicitly set parent name
+        parent_id: "", // No parent for root menu
+        root_id: "", // No root for root menu
+        root_name: "", // No root name for root menu
+      })
+    );
+  };
 
   const toggleExpand = (name: string) => {
     setExpanded((prev) => ({
@@ -73,7 +113,6 @@ export function MenuTree() {
 
     return (
       <div key={item.id} className="flex flex-col relative">
-        {/* Vertical line for parent hierarchy */}
         {item.depth > 0 && isFirstAtDepth && !isLastAtDepth && (
           <div
             className="absolute border-l-2 border-[#E5E7EB]"
@@ -145,8 +184,12 @@ export function MenuTree() {
                 setSelectedMenu({
                   ...item,
                   id: "",
-                  parentData: item.name,
                   depth: item.depth + 1,
+                  name: "",
+                  parent_name: item.name,
+                  parent_id: item.id,
+                  root_id: item.root_id,
+                  root_name: item.root_name,
                 })
               )
             }
@@ -170,9 +213,45 @@ export function MenuTree() {
       </div>
     );
   };
-
   return (
     <div className="flex-1 max-w-xl">
+      {/* Root Menu Selection */}
+      <div className="mb-4 flex items-center gap-2">
+        <div className="flex-grow">
+          <Select
+            onValueChange={handleRootMenuChange}
+            value={selectedRootMenu?.id || ""}
+          >
+            <SelectTrigger>
+              <SelectValue placeholder="Select Root Menu" />
+            </SelectTrigger>
+            <SelectContent>
+              {rootMenusLoading ? (
+                <div className="p-2 text-center">Loading root menus...</div>
+              ) : rootMenus.length === 0 ? (
+                <SelectItem value="No root menu">No root menu</SelectItem>
+              ) : (
+                rootMenus.map((menu) => (
+                  <SelectItem key={menu.id} value={menu.id}>
+                    {menu.name}
+                  </SelectItem>
+                ))
+              )}
+            </SelectContent>
+          </Select>
+        </div>
+
+        {/* Add Root Menu Button */}
+        <Button
+          variant="outline"
+          size="icon"
+          onClick={handleAddRootMenu}
+          className="shrink-0 bg-blue-500 text-white"
+        >
+          <Plus className="h-4 w-4" />
+        </Button>
+      </div>
+
       <div className="flex gap-2 mb-4">
         <Button
           variant="outline"
@@ -191,6 +270,7 @@ export function MenuTree() {
           Collapse All
         </Button>
       </div>
+
       <div className="rounded-lg border bg-background p-2">
         {loading ? (
           <div className="p-4 text-center text-muted-foreground">
@@ -198,9 +278,11 @@ export function MenuTree() {
           </div>
         ) : error ? (
           <div className="p-4 text-center text-red-500">{error}</div>
-        ) : !groupedItems["Root"] || groupedItems["Root"].length === 0 ? (
+        ) : !groupedItems["Root"] || groupedItems["Root"].length !== 1 ? (
           <div className="p-4 text-center text-muted-foreground">
-            No menus found. Create your first menu to get started.
+            {selectedRootMenu
+              ? "No menus found for selected root menu."
+              : "Select a root menu to view its structure."}
           </div>
         ) : (
           groupedItems["Root"].map((item: MenuItem, index: number) =>
