@@ -37,6 +37,13 @@ export function MenuTreeItem({
 }: MenuTreeItemProps) {
   const dispatch = useDispatch();
 
+  // Find the parent item based on parent_id
+  const parentItem = Object.values(groupedItems)
+    .flat()
+    .find((parentCandidate) => parentCandidate.id === item.parent_id);
+
+  console.log(parentItem);
+
   const hasChildren = groupedItems[item.name]?.length > 0;
   const isExpanded = expanded[item.name];
   const children = groupedItems[item.name] || [];
@@ -103,7 +110,17 @@ export function MenuTreeItem({
           <span className="w-4" />
         )}
         <button
-          onClick={() => dispatch(setSelectedMenu(item))}
+          onClick={() =>
+            dispatch(
+              setSelectedMenu({
+                ...item,
+                parent_name:
+                  parentItem && item.parent_name !== "Root"
+                    ? parentItem.name
+                    : item.parent_name,
+              })
+            )
+          }
           className="hover:text-blue-500"
         >
           {item.name}

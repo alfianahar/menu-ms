@@ -31,6 +31,7 @@ export const fetchMenus = createAsyncThunk(
       const response = await axios.get(`${API_URL}/menus`);
       return response.data;
     } catch (error) {
+      console.error("Error fetching menus:", error);
       return rejectWithValue("Failed to fetch menus");
     }
   }
@@ -44,6 +45,7 @@ export const fetchRootMenus = createAsyncThunk(
       const response = await axios.get(`${API_URL}/menus/root`);
       return response.data;
     } catch (error) {
+      console.error("Error fetching root menus:", error);
       return rejectWithValue("Failed to fetch root menus");
     }
   }
@@ -61,6 +63,7 @@ export const saveMenu = createAsyncThunk(
 
       return response.data;
     } catch (error) {
+      console.error("Error saving menu:", error);
       return rejectWithValue("Failed to save menu");
     }
   }
@@ -75,6 +78,7 @@ export const deleteMenu = createAsyncThunk(
 
       return menuId;
     } catch (error) {
+      console.error("Error deleting menu:", error);
       return rejectWithValue("Failed to delete menu");
     }
   }

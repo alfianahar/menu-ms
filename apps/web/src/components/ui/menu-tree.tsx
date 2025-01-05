@@ -34,8 +34,16 @@ export function MenuTree() {
       : items;
 
     return filteredItems.reduce(
-      (acc: { [x: string]: any[] }, item: { parent_name: any }) => {
-        const parent = item.parent_name || "Root";
+      (acc, item) => {
+        const parent =
+          item.parent_name === "Root"
+            ? "Root"
+            : item.parent_id
+              ? filteredItems.find(
+                  (parentItem) => parentItem.id === item.parent_id
+                )?.name || item.parent_name
+              : item.parent_name;
+
         if (!acc[parent]) {
           acc[parent] = [];
         }
@@ -55,7 +63,7 @@ export function MenuTree() {
 
   const expandAll = () => {
     const allExpanded: Record<string, boolean> = {};
-    items.forEach((item: { name: string | number }) => {
+    items.forEach((item) => {
       allExpanded[item.name] = true;
     });
     setExpanded(allExpanded);

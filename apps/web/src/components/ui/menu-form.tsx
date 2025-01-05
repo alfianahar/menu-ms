@@ -14,7 +14,6 @@ import {
   deleteMenu as deleteMenuAction,
 } from "@/lib/store/slices/menuSlice";
 import { AppDispatch } from "@/lib/store";
-import { API_URL } from "@/lib/constants";
 
 export function MenuForm() {
   const { selectedMenu, selectedRootMenu, formLoading } = useSelector(
